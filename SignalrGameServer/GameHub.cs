@@ -13,6 +13,8 @@ namespace SignalrGameServer
 
         #region Game hub variables
         // Use static to protect Data across dofferent hub invocations
+
+            //q for adding players to the game
         public static Queue<PlayerData> RegisteredPlayers = new Queue<PlayerData>( new PlayerData[]
         {
             new PlayerData { GamerTag = "Dark Terror", imageName = "", playerID = Guid.NewGuid().ToString(), XP = 200 },
@@ -23,6 +25,7 @@ namespace SignalrGameServer
 
         public static List<PlayerData> Players = new List<PlayerData>();
 
+        //stack of strings, name of characters players can take on. Used to get image of player character
         public static Stack<string> characters = new Stack<string>(
                     new string[] { "Player 4", "Player 3", "Player 2", "Player 1" });
 
@@ -39,6 +42,9 @@ namespace SignalrGameServer
             // Check and if the charcters
             if (characters.Count > 0)
             {
+
+                
+
                 // pop name
                 string character = characters.Pop();
                 // if there is a registered player
@@ -48,12 +54,19 @@ namespace SignalrGameServer
                     newPlayer.imageName = character;
                     newPlayer.playerPosition = new Position { X = new Random().Next(700),
                                                             Y = new Random().Next(500) };
+
+
+
+
                     // Tell all the other clients that this player has Joined
                     Clients.Others.Joined(newPlayer);
                     // Tell this client about all the other current 
                     Clients.Caller.CurrentPlayers(Players);
-                    // Finaly add the new player on teh server
+                    // Finaly add the new player on the server
                     Players.Add(newPlayer);
+
+
+
                     return newPlayer;
                 }
                

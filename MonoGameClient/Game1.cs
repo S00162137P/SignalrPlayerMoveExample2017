@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using Engine.Engines;
 using Sprites;
 using System.Collections.Generic;
+using GameComponentNS;
 
 namespace MonoGameClient
 {
@@ -50,12 +51,17 @@ namespace MonoGameClient
             proxy = serverConnection.CreateHubProxy("GameHub");
             serverConnection.Start();
 
-
+            //Join message
+            //name of method writing to respond to
             Action<PlayerData> joined = clientJoined;
             proxy.On<PlayerData>("Joined", joined);
 
+            //expects playerdata
             Action<List<PlayerData>> currentPlayers = clientPlayers;
             proxy.On<List<PlayerData>>("CurrentPlayers", currentPlayers);
+
+
+
 
             Action<string, Position> otherMove = clientOtherMoved;
             proxy.On<string, Position>("OtherMove", otherMove);
@@ -160,6 +166,7 @@ namespace MonoGameClient
             // Create an other player sprites in this client afte
             new SimplePlayerSprite(this, player, Content.Load<Texture2D>(player.imageName),
                                     new Point(player.playerPosition.X, player.playerPosition.Y));
+            new FadeText(this,Vector2.Zero, "Welcome" + player.GamerTag + "You are playing as " + player.imageName);
             connectionMessage = player.playerID + " created ";
         }
 
@@ -173,6 +180,7 @@ namespace MonoGameClient
             Services.AddService<SpriteBatch>(spriteBatch);
 
             font = Content.Load<SpriteFont>("Message");
+            Services.AddService<SpriteFont>(font);
             
         }
 
